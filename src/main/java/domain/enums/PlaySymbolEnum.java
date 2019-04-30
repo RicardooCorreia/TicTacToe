@@ -1,6 +1,7 @@
 package domain.enums;
 
 public enum PlaySymbolEnum {
+    NOTHING(' '),
     X('X'),
     O('O');
 

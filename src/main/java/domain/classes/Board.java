@@ -4,6 +4,7 @@ import domain.enums.PlaySymbolEnum;
 import domain.exceptions.NotAdmissibleValuesException;
 import domain.exceptions.TileAlreadyPlayed;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Board {
@@ -15,6 +16,7 @@ public class Board {
 
     public Board() {
         this.tiles = new PlaySymbolEnum[9];
+        Arrays.fill(tiles, PlaySymbolEnum.X);
     }
 
     public boolean play(int x, PlaySymbolEnum symbol) throws NotAdmissibleValuesException, TileAlreadyPlayed {
@@ -41,7 +43,7 @@ public class Board {
     }
 
     private void checkIfFreeTile(int x) throws TileAlreadyPlayed {
-        if (Objects.nonNull(tiles[x])) {
+        if (!PlaySymbolEnum.NOTHING.equals(tiles[x])) {
             throw new TileAlreadyPlayed();
         }
     }
@@ -54,5 +56,25 @@ public class Board {
 
     private boolean notBetweenRanges(int number) {
         return number < MIN_POSITION || number >= MAX_POSITION;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "_____________" +
+                        System.lineSeparator() +
+                        "| " + String.join(" | ", tiles[0].toString(), tiles[1].toString(), tiles[2].toString()) + " |"
+                        + System.lineSeparator() +
+                        "| " + String.join(" | ", tiles[3].toString(), tiles[4].toString(), tiles[5].toString()) + " |"
+                        + System.lineSeparator() +
+                        "| " + String.join(" | ", tiles[6].toString(), tiles[7].toString(), tiles[8].toString()) + " |"
+                        + System.lineSeparator() +
+                        "_____________";
+    }
+
+    public static void main(String[] args) {
+        Board board = new Board();
+
+        System.out.println(board.toString());
     }
 }
