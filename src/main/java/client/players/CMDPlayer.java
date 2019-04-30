@@ -44,17 +44,12 @@ public class CMDPlayer implements Player {
                 board.play(play, this.playSymbol);
                 played = true;
             } catch (NotAdmissibleValuesException e) {
-                print(INVALID_VALUES_MESSAGE);
+                System.out.println((INVALID_VALUES_MESSAGE));
             } catch (TileAlreadyPlayed tileAlreadyPlayed) {
-                print(TILE_ALREADY_PLAYED_MESSAGE);
+                System.out.println((TILE_ALREADY_PLAYED_MESSAGE));
             }
         }
         return play;
-    }
-
-    @VisibleForTesting
-    protected void print(String message) {
-        System.out.println(message);
     }
 
     @Override

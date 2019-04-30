@@ -84,7 +84,7 @@ public class CMDPlayerTest {
     @Test
     public void shouldWarnAboutInvalidValues() throws IOException {
         // Given
-        subject = new CMDPlayer(mockScannerWith("-1"), PlaySymbolEnum.X, "Test subject");
+        subject = new CMDPlayer(mockScannerWith("99"), PlaySymbolEnum.X, "Test subject");
 
         // When
         subject.doPlay(board, subject.getPlaySymbol());
