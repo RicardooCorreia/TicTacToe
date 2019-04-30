@@ -73,6 +73,7 @@ public class BoardTest {
         boolean isWin = subject.doWeHaveAWinner();
 
         // Then
+        assertTrue(subject.isFinished());
         assertTrue(isWin);
     }
 
@@ -86,8 +87,11 @@ public class BoardTest {
         boolean isWin = subject.doWeHaveAWinner();
 
         // Then
+        assertFalse(subject.isFinished());
         assertFalse(isWin);
     }
+
+    // TODO: should finished when out of moves
 
     @Test
     public void shouldReturnToString() {
@@ -100,7 +104,7 @@ public class BoardTest {
 
     private void mockNotWinnerTiles(PlaySymbolEnum[] tiles) {
         Arrays.fill(tiles, PlaySymbolEnum.NOTHING);
-        tiles[0] = PlaySymbolEnum.X;
+        tiles[7] = PlaySymbolEnum.X;
         tiles[1] = PlaySymbolEnum.X;
         tiles[3] = PlaySymbolEnum.X;
     }

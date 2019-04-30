@@ -7,10 +7,12 @@ import domain.exceptions.TileAlreadyPlayed;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Board {
     private final PlaySymbolEnum[] tiles;
     private PlaySymbolEnum lastPlay;
+    private boolean isFinished = false;
 
     private static final int MIN_POSITION = 0;
     private static final int MAX_POSITION = 9;
@@ -24,20 +26,37 @@ public class Board {
         Arrays.fill(tiles, PlaySymbolEnum.NOTHING);
     }
 
+    // TODO: should finished when out of moves
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
     public boolean play(int x, PlaySymbolEnum symbol) throws NotAdmissibleValuesException, TileAlreadyPlayed {
-        checkValuesAdmissible(x);
-        checkIfFreeTile(x);
-        // TODO - check if same player don't play twice
+        if (!isFinished) {
+            checkValuesAdmissible(x);
+            checkIfFreeTile(x);
+            // TODO - check if same player don't play twice
 
-        tiles[x] = symbol;
-        lastPlay = symbol;
+            tiles[x] = symbol;
+            lastPlay = symbol;
 
-        return doWeHaveAWinner();
+            return doWeHaveAWinner();
+        } else {
+            return false;
+        }
     }
 
     @VisibleForTesting
     protected boolean doWeHaveAWinner() {
-        return WinnableSituations.getSituations().stream().anyMatch(this::checkSituation);
+        isFinished = WinnableSituations.getSituations().stream().anyMatch(this::checkSituation) || isOutOfMoves();
+        return isFinished;
+    }
+
+    private boolean isOutOfMoves() {
+        return Stream.of(tiles)
+                .filter(playSymbolEnum -> !playSymbolEnum.equals(PlaySymbolEnum.NOTHING))
+                .count() == MAX_POSITION;
     }
 
     @VisibleForTesting
