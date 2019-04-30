@@ -1,5 +1,6 @@
 package domain.classes;
 
+import com.google.common.annotations.VisibleForTesting;
 import domain.enums.PlaySymbolEnum;
 import domain.exceptions.NotAdmissibleValuesException;
 import domain.exceptions.TileAlreadyPlayed;
@@ -14,9 +15,13 @@ public class Board {
     private static final int MIN_POSITION = 0;
     private static final int MAX_POSITION = 9;
 
+    public PlaySymbolEnum[] getTiles() {
+        return tiles;
+    }
+
     public Board() {
         this.tiles = new PlaySymbolEnum[9];
-        Arrays.fill(tiles, PlaySymbolEnum.X);
+        Arrays.fill(tiles, PlaySymbolEnum.NOTHING);
     }
 
     public boolean play(int x, PlaySymbolEnum symbol) throws NotAdmissibleValuesException, TileAlreadyPlayed {
@@ -30,16 +35,21 @@ public class Board {
         return doWeHaveAWinner();
     }
 
-    private boolean doWeHaveAWinner() {
+    @VisibleForTesting
+    protected boolean doWeHaveAWinner() {
         return WinnableSituations.getSituations().stream().anyMatch(this::checkSituation);
     }
 
-    private boolean checkSituation(WinnableSituation winnableSituation) {
-        int tile1 = winnableSituation.getTile1();
-        int tile2 = winnableSituation.getTile1();
-        int tile3 = winnableSituation.getTile1();
+    @VisibleForTesting
+    protected boolean checkSituation(WinnableSituation winnableSituation) {
+        int tile1Index = winnableSituation.getTile1() - 1;
+        int tile2Index = winnableSituation.getTile2() - 1;
+        int tile3Index = winnableSituation.getTile3() - 1;
 
-        return Objects.nonNull(tiles[tile1]) && tiles[tile1].equals(tile2) && tiles[tile1].equals(tile3);
+        return Objects.nonNull(tiles[tile1Index])
+                && !tiles[tile1Index].equals(PlaySymbolEnum.NOTHING)
+                && tiles[tile1Index].equals(tiles[tile2Index])
+                && tiles[tile1Index].equals(tiles[tile3Index]);
     }
 
     private void checkIfFreeTile(int x) throws TileAlreadyPlayed {
@@ -70,11 +80,5 @@ public class Board {
                         "| " + String.join(" | ", tiles[6].toString(), tiles[7].toString(), tiles[8].toString()) + " |"
                         + System.lineSeparator() +
                         "_____________";
-    }
-
-    public static void main(String[] args) {
-        Board board = new Board();
-
-        System.out.println(board.toString());
     }
 }
