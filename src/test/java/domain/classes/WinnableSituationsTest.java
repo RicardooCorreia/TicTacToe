@@ -17,4 +17,13 @@ public class WinnableSituationsTest {
         assertNotNull(situations);
         assertEquals(situations.size(), 8);
     }
+
+    @Test
+    public void instanceTest() {
+        // Given
+        WinnableSituations subject = new WinnableSituations();
+
+        // Then
+        assertNotNull(subject);
+    }
 }

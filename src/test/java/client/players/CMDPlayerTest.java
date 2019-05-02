@@ -3,23 +3,22 @@ package client.players;
 import domain.classes.Board;
 import domain.enums.PlaySymbolEnum;
 import domain.enums.PlayerType;
-import org.apache.commons.io.IOUtils;
+import org.apache.maven.surefire.shade.org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.io.*;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CMDPlayerTest {
+
+    private final PrintStream originalOut = System.out;
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     private CMDPlayer subject;
 
@@ -29,6 +28,12 @@ public class CMDPlayerTest {
     @Before
     public void setUp() {
         initMocks(this);
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @After
+    public void restoreStreams() {
+        System.setOut(originalOut);
     }
 
     @Test
@@ -84,26 +89,32 @@ public class CMDPlayerTest {
     @Test
     public void shouldWarnAboutInvalidValues() throws IOException {
         // Given
-        subject = new CMDPlayer(mockScannerWith("99"), PlaySymbolEnum.X, "Test subject");
+        subject = new CMDPlayer(mockScannerWith("99 2"), PlaySymbolEnum.X, "Test subject");
+
+        // We need a real board to make the test and not a mocked one
+        Board notMockedboard = new Board();
 
         // When
-        subject.doPlay(board, subject.getPlaySymbol());
+        subject.doPlay(notMockedboard, subject.getPlaySymbol());
 
         // Then
-            // TODO - Test for System.out
+        assertEquals(CMDPlayer.getInvalidValuesMessage(), outContent.toString().trim());
     }
 
     @Test
     public void shouldWarnAboutDuplicatedMoves() throws IOException {
         // Given
-        subject = new CMDPlayer(mockScannerWith("2\n2"), PlaySymbolEnum.X, "Test subject");
+        subject = new CMDPlayer(mockScannerWith("2 2 3"), PlaySymbolEnum.X, "Test subject");
+
+        // We need a real board to make the test and not a mocked one
+        Board notMockedboard = new Board();
 
         // When
-        subject.doPlay(board, subject.getPlaySymbol());
-        subject.doPlay(board, subject.getPlaySymbol());
+        subject.doPlay(notMockedboard, subject.getPlaySymbol());
+        subject.doPlay(notMockedboard, subject.getPlaySymbol());
 
         // Then
-            // TODO - Test for System.out
+        assertEquals(CMDPlayer.getTileAlreadyPlayedMessage(), outContent.toString().trim());
     }
 
     private InputStream inputStreamOf(String input) throws IOException {

@@ -49,12 +49,13 @@ public class Board {
 
     @VisibleForTesting
     protected boolean doWeHaveAWinner() {
-        isFinished = WinnableSituations.getSituations().stream().anyMatch(this::checkSituation) || isOutOfMoves();
+        isFinished = isOutOfMoves() || WinnableSituations.getSituations().stream().anyMatch(this::checkSituation);
         return isFinished;
     }
 
     private boolean isOutOfMoves() {
         return Stream.of(tiles)
+                .filter(Objects::nonNull)
                 .filter(playSymbolEnum -> !playSymbolEnum.equals(PlaySymbolEnum.NOTHING))
                 .count() == MAX_POSITION;
     }

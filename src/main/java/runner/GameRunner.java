@@ -1,4 +1,4 @@
-package game;
+package runner;
 
 import client.players.CMDPlayer;
 import domain.classes.Board;
@@ -7,7 +7,7 @@ import domain.interfaces.Player;
 
 import java.util.Scanner;
 
-public class GameController {
+public class GameRunner {
 
     public static void main(String[] args) {
         Board board;
@@ -23,13 +23,17 @@ public class GameController {
 
         boolean flagPlayer = true;
         System.out.println(board.toString());
+        Player nextPlayer = null;
         while (!board.isFinished()) {
-            Player nextPlayer = flagPlayer ? player1 : player2;
+            nextPlayer = flagPlayer ? player1 : player2;
             flagPlayer = !flagPlayer;
 
             System.out.println(nextPlayer.getName() + " is next!");
             nextPlayer.doPlay(board, nextPlayer.getPlaySymbol());
             System.out.println(board.toString());
         }
+
+        assert nextPlayer != null;
+        System.out.println(nextPlayer.getName() + " wins!");
     }
 }

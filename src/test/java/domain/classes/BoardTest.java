@@ -91,6 +91,42 @@ public class BoardTest {
         assertFalse(isWin);
     }
 
+    @Test
+    public void shouldNotMakePlayWhenIsAlreadyAWinner() throws NotAdmissibleValuesException, TileAlreadyPlayed {
+        // Given
+        subject = new Board();
+        mockWinnerTiles(subject.getTiles());
+        subject.doWeHaveAWinner();
+
+        PlaySymbolEnum[] winnerTiles = subject.getTiles().clone();
+
+        // When
+        boolean result = subject.play(8, PlaySymbolEnum.X);
+
+        // Then
+        assertTrue(subject.isFinished());
+        assertFalse(result);
+        assertArrayEquals(winnerTiles, subject.getTiles());
+    }
+
+    @Test
+    public void shouldNotMakePlayWhenGameOutOfMoves() throws NotAdmissibleValuesException, TileAlreadyPlayed {
+        // Given
+        subject = new Board();
+        mockAllTiles(subject.getTiles());
+        subject.doWeHaveAWinner();
+
+        PlaySymbolEnum[] allTiles = subject.getTiles().clone();
+
+        // When
+        boolean result = subject.play(2, PlaySymbolEnum.X);
+
+        // Then
+        assertTrue(subject.isFinished());
+        assertFalse(result);
+        assertArrayEquals(allTiles, subject.getTiles());
+    }
+
     // TODO: should finished when out of moves
 
     @Test
@@ -102,9 +138,22 @@ public class BoardTest {
         assertNotNull(subject.toString());
     }
 
+    @Test
+    public void testNullTiles() {
+        // Given
+        subject = new Board();
+        mockNullTiles(subject.getTiles());
+
+        // When
+        boolean result = subject.doWeHaveAWinner();
+
+        // Then
+        assertFalse(result);
+    }
+
     private void mockNotWinnerTiles(PlaySymbolEnum[] tiles) {
         Arrays.fill(tiles, PlaySymbolEnum.NOTHING);
-        tiles[7] = PlaySymbolEnum.X;
+        tiles[0] = PlaySymbolEnum.X;
         tiles[1] = PlaySymbolEnum.X;
         tiles[3] = PlaySymbolEnum.X;
     }
@@ -114,5 +163,27 @@ public class BoardTest {
         tiles[0] = PlaySymbolEnum.X;
         tiles[1] = PlaySymbolEnum.X;
         tiles[2] = PlaySymbolEnum.X;
+    }
+
+    private void mockAllTiles(PlaySymbolEnum[] tiles) {
+        Arrays.fill(tiles, PlaySymbolEnum.NOTHING);
+        // O X X
+        tiles[0] = PlaySymbolEnum.O;
+        tiles[1] = PlaySymbolEnum.X;
+        tiles[2] = PlaySymbolEnum.X;
+
+        // X X O
+        tiles[3] = PlaySymbolEnum.X;
+        tiles[4] = PlaySymbolEnum.X;
+        tiles[5] = PlaySymbolEnum.O;
+
+        // O O X
+        tiles[6] = PlaySymbolEnum.O;
+        tiles[7] = PlaySymbolEnum.O;
+        tiles[8] = PlaySymbolEnum.X;
+    }
+
+    private void mockNullTiles(PlaySymbolEnum[] tiles) {
+        Arrays.fill(tiles, null);
     }
 }
